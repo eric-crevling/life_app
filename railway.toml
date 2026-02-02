@@ -1,0 +1,6 @@
+[build]
+builder = "RAILPACK"
+buildCommand = "npm install && npm run tailwind:build && uv sync && uv run python manage.py collectstatic --noinput && uv run python manage.py migrate --noinput"
+
+[deploy]
+startCommand = "uv run gunicorn config.wsgi"
