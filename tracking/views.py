@@ -14,7 +14,6 @@ from .models import (
     WaterIntake,
     WeighIn,
     Workout,
-    WorkoutCategory,
 )
 
 
