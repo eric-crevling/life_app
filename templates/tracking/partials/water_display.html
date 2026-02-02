@@ -1,7 +1,11 @@
 <div id="water-display" class="flex items-center gap-4">
-    <span class="text-2xl font-bold">{{ water.amount_oz }} oz</span>
-    <button hx-post="{% url 'tracking:water_add' %}"
-            hx-target="#water-display"
-            hx-swap="outerHTML"
-            class="btn btn-primary btn-sm">+8 oz</button>
+    <span class="text-2xl font-bold">{{ water.amount_oz|default:"0" }} oz</span>
+    <button
+        hx-post="{% url 'tracking:water_add' %}"
+        hx-target="#water-display"
+        hx-swap="outerHTML"
+        class="btn btn-primary btn-sm"
+    >
+        +8 oz
+    </button>
 </div>

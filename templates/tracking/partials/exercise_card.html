@@ -4,6 +4,9 @@
             <div>
                 <span class="font-bold">{{ exercise.name }}</span>
                 <span class="badge badge-sm badge-ghost ml-2">{{ exercise.get_exercise_type_display }}</span>
+                {% if exercise.exercise_type == "strength" and exercise.current_pr %}
+                    <span class="text-xs text-base-content/50 ml-2">PR: {{ exercise.current_pr }} lbs</span>
+                {% endif %}
             </div>
             <button hx-post="{% url 'tracking:exercise_delete' exercise.pk %}"
                     hx-target="#exercise-{{ exercise.pk }}"

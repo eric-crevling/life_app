@@ -1,6 +1,9 @@
 <div id="set-{{ set.pk }}"
      class="flex justify-between items-center text-sm py-1">
-    <span>Set {{ set.set_number }}: {{ set.reps }} reps × {{ set.weight }} lbs</span>
+    <span>
+        Set {{ set.set_number }}: {{ set.reps }} reps × {{ set.weight }} lbs
+        {% if is_pr %}<span class="badge badge-sm badge-success ml-1">PR!</span>{% endif %}
+    </span>
     <button hx-post="{% url 'tracking:set_delete' set.pk %}"
             hx-target="#set-{{ set.pk }}"
             hx-swap="outerHTML"

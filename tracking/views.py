@@ -1,5 +1,5 @@
 from django.contrib.auth.decorators import login_required
-from django.db.models import Sum
+from django.db.models import Max, Sum
 from django.http import HttpResponse
 from django.shortcuts import get_object_or_404, render
 from django.utils import timezone
@@ -248,6 +248,14 @@ def workout_create(request):
 def workout_detail(request, pk):
     workout = get_object_or_404(Workout, pk=pk, user=request.user)
     exercises = workout.exercises.prefetch_related("sets").all()
+
+    for exercise in exercises:
+        if exercise.exercise_type == "strength":
+            exercise.current_pr = ExerciseSet.objects.filter(
+                exercise__name=exercise.name,
+                exercise__workout__user=request.user,
+            ).aggregate(max_weight=Max("weight"))["max_weight"]
+
     return render(
         request,
         "tracking/workout_detail.html",
@@ -260,17 +268,35 @@ def workout_detail(request, pk):
 
 @login_required
 @require_POST
-def exercise_create(request, pk):
-    workout = get_object_or_404(Workout, pk=pk, user=request.user)
-    exercise = Exercise.objects.create(
-        workout=workout,
-        name=request.POST.get("name", ""),
-        exercise_type=request.POST.get("exercise_type", "strength"),
-        duration_minutes=request.POST.get("duration_minutes") or None,
-        distance=request.POST.get("distance") or None,
+def set_create(request, pk):
+    exercise = get_object_or_404(Exercise, pk=pk, workout__user=request.user)
+    last_set = exercise.sets.order_by("-set_number").first()
+    next_number = (last_set.set_number + 1) if last_set else 1
+    new_set = ExerciseSet.objects.create(
+        exercise=exercise,
+        set_number=next_number,
+        reps=request.POST.get("reps", 0),
+        weight=request.POST.get("weight", 0),
     )
+
+    previous_max = (
+        ExerciseSet.objects.filter(
+            exercise__name=exercise.name,
+            exercise__workout__user=exercise.workout.user,
+        )
+        .exclude(pk=new_set.pk)
+        .aggregate(max_weight=Max("weight"))["max_weight"]
+    )
+
+    is_pr = previous_max is None or new_set.weight > previous_max
+
     return render(
-        request, "tracking/partials/exercise_card.html", {"exercise": exercise}
+        request,
+        "tracking/partials/set_row.html",
+        {
+            "set": new_set,
+            "is_pr": is_pr,
+        },
     )
 
 
