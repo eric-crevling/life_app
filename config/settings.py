@@ -33,9 +33,6 @@ DEBUG = os.environ.get("DEBUG", "False") == "True"
 
 # Security settings for production
 SECURE_BROWSER_XSS_FILTER = True
-SESSION_COOKIE_SECURE = True
-CSRF_COOKIE_SECURE = True
-SECURE_SSL_REDIRECT = bool(os.environ.get("RAILWAY_ENVIRONMENT", False))
 ALLOWED_HOSTS = os.environ.get("ALLOWED_HOSTS", "localhost,127.0.0.1").split(",")
 CSRF_TRUSTED_ORIGINS = [
     origin for origin in os.environ.get("CSRF_TRUSTED_ORIGINS", "").split(",") if origin
