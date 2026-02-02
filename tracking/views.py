@@ -1,7 +1,7 @@
 from django.contrib.auth.decorators import login_required
 from django.db.models import Max, Sum
 from django.http import HttpResponse
-from django.shortcuts import get_object_or_404, render
+from django.shortcuts import get_object_or_404, redirect, render
 from django.utils import timezone
 from django.views.decorators.http import require_POST
 
@@ -268,6 +268,22 @@ def workout_detail(request, pk):
 
 @login_required
 @require_POST
+def exercise_create(request, pk):
+    workout = get_object_or_404(Workout, pk=pk, user=request.user)
+    exercise = Exercise.objects.create(
+        workout=workout,
+        name=request.POST.get("name", ""),
+        exercise_type=request.POST.get("exercise_type", "strength"),
+        duration_minutes=request.POST.get("duration_minutes") or None,
+        distance=request.POST.get("distance") or None,
+    )
+    return render(
+        request, "tracking/partials/exercise_card.html", {"exercise": exercise}
+    )
+
+
+@login_required
+@require_POST
 def set_create(request, pk):
     exercise = get_object_or_404(Exercise, pk=pk, workout__user=request.user)
     last_set = exercise.sets.order_by("-set_number").first()
@@ -298,21 +314,6 @@ def set_create(request, pk):
             "is_pr": is_pr,
         },
     )
-
-
-@login_required
-@require_POST
-def set_create(request, pk):
-    exercise = get_object_or_404(Exercise, pk=pk, workout__user=request.user)
-    last_set = exercise.sets.order_by("-set_number").first()
-    next_number = (last_set.set_number + 1) if last_set else 1
-    new_set = ExerciseSet.objects.create(
-        exercise=exercise,
-        set_number=next_number,
-        reps=request.POST.get("reps", 0),
-        weight=request.POST.get("weight", 0),
-    )
-    return render(request, "tracking/partials/set_row.html", {"set": new_set})
 
 
 @login_required
