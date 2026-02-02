@@ -1,0 +1,50 @@
+<div id="exercise-{{ exercise.pk }}" class="card bg-base-100 shadow">
+    <div class="card-body py-3 px-4">
+        <div class="flex justify-between items-center">
+            <div>
+                <span class="font-bold">{{ exercise.name }}</span>
+                <span class="badge badge-sm badge-ghost ml-2">{{ exercise.get_exercise_type_display }}</span>
+            </div>
+            <button hx-post="{% url 'tracking:exercise_delete' exercise.pk %}"
+                    hx-target="#exercise-{{ exercise.pk }}"
+                    hx-swap="outerHTML"
+                    hx-confirm="Delete this exercise and all its sets?"
+                    class="btn btn-ghost btn-xs text-error">Delete</button>
+        </div>
+        {% if exercise.exercise_type == "cardio" %}
+            <div class="text-sm text-base-content/70 mt-1">
+                {% if exercise.duration_minutes %}{{ exercise.duration_minutes }} min{% endif %}
+                {% if exercise.distance %}· {{ exercise.distance }} mi{% endif %}
+            </div>
+        {% else %}
+            <div id="sets-{{ exercise.pk }}" class="mt-2 space-y-1">
+                {% for set in exercise.sets.all %}
+                    {% include "tracking/partials/set_row.html" %}
+                {% endfor %}
+            </div>
+            <form hx-post="{% url 'tracking:set_create' exercise.pk %}"
+                  hx-target="#sets-{{ exercise.pk }}"
+                  hx-swap="beforeend"
+                  hx-on::after-request="if(event.detail.successful) this.reset()"
+                  class="flex gap-2 mt-2 items-end">
+                {% csrf_token %}
+                <label class="form-control flex-1">
+                    <span class="label-text text-xs">Reps</span>
+                    <input type="number"
+                           name="reps"
+                           class="input input-bordered input-sm w-full"
+                           required>
+                </label>
+                <label class="form-control flex-1">
+                    <span class="label-text text-xs">Weight</span>
+                    <input type="number"
+                           name="weight"
+                           step="0.01"
+                           class="input input-bordered input-sm w-full"
+                           required>
+                </label>
+                <button type="submit" class="btn btn-primary btn-sm">+ Set</button>
+            </form>
+        {% endif %}
+    </div>
+</div>

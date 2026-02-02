@@ -1,0 +1,79 @@
+{% extends "base.html" %}
+{% block title %}Workout {{ workout.date }} — HomeBase{% endblock %}
+{% block content %}
+    <div class="max-w-lg mx-auto space-y-6">
+        <div class="flex justify-between items-center">
+            <div>
+                <h1 class="text-2xl font-bold">{{ workout.category|default:"Workout" }}</h1>
+                <p class="text-sm text-base-content/60">{{ workout.date }}</p>
+            </div>
+            <a href="{% url 'tracking:workout_list' %}" class="btn btn-ghost btn-sm">← Back</a>
+        </div>
+        {% if workout.notes %}<p class="text-base-content/70">{{ workout.notes }}</p>{% endif %}
+        <div id="exercise-list" class="space-y-4">
+            {% for exercise in exercises %}
+                {% include "tracking/partials/exercise_card.html" %}
+            {% empty %}
+                <p class="text-center text-base-content/60">No exercises yet. Add one below!</p>
+            {% endfor %}
+        </div>
+        <div class="card bg-base-100 shadow">
+            <div class="card-body">
+                <h2 class="card-title text-base">Add Exercise</h2>
+                <form hx-post="{% url 'tracking:exercise_create' workout.pk %}"
+                      hx-target="#exercise-list"
+                      hx-swap="beforeend"
+                      hx-on::after-request="if(event.detail.successful) this.reset()">
+                    {% csrf_token %}
+                    <div class="space-y-3">
+                        <label class="form-control w-full">
+                            <span class="label-text">Exercise name</span>
+                            <input type="text"
+                                   name="name"
+                                   class="input input-bordered w-full"
+                                   placeholder="e.g. Bench Press"
+                                   required>
+                        </label>
+                        <label class="form-control w-full">
+                            <span class="label-text">Type</span>
+                            <select name="exercise_type" class="select select-bordered w-full">
+                                <option value="strength">Strength</option>
+                                <option value="cardio">Cardio</option>
+                            </select>
+                        </label>
+                        <div id="cardio-fields"
+                             class="grid grid-cols-2 gap-3 hidden"
+                             x-data
+                             x-show="document.querySelector('[name=exercise_type]')?.value === 'cardio'"
+                             x-cloak>
+                            <label class="form-control">
+                                <span class="label-text">Duration (min)</span>
+                                <input type="number"
+                                       name="duration_minutes"
+                                       class="input input-bordered w-full">
+                            </label>
+                            <label class="form-control">
+                                <span class="label-text">Distance</span>
+                                <input type="number"
+                                       name="distance"
+                                       step="0.01"
+                                       class="input input-bordered w-full">
+                            </label>
+                        </div>
+                        <button type="submit" class="btn btn-primary w-full">Add Exercise</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    <script>
+    document.querySelector('[name=exercise_type]')?.addEventListener('change', function() {
+        const cardioFields = document.getElementById('cardio-fields');
+        if (this.value === 'cardio') {
+            cardioFields.classList.remove('hidden');
+        } else {
+            cardioFields.classList.add('hidden');
+        }
+    });
+    </script>
+{% endblock %}

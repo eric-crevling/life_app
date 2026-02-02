@@ -1,0 +1,29 @@
+<div id="meal-{{ meal.pk }}" class="card bg-base-100 shadow-sm">
+    <div class="card-body py-3 px-4">
+        <div class="flex justify-between items-start">
+            <div>
+                <span class="font-bold">{{ meal.name }}</span>
+                {% if meal.meal_type %}
+                    <span class="badge badge-sm badge-ghost ml-2">{{ meal.get_meal_type_display }}</span>
+                {% endif %}
+            </div>
+            <div class="flex items-center gap-2">
+                <span class="text-sm text-base-content/60">{{ meal.logged_at|time:"g:i A" }}</span>
+                {% if just_saved %}
+                    <span class="badge badge-sm badge-success">Saved!</span>
+                {% else %}
+                    <button hx-post="{% url 'tracking:meal_save' meal.pk %}"
+                            hx-target="#meal-{{ meal.pk }}"
+                            hx-swap="outerHTML"
+                            class="btn btn-ghost btn-xs">Save</button>
+                {% endif %}
+            </div>
+        </div>
+        <div class="grid grid-cols-4 text-sm text-base-content/70 mt-1">
+            <span>{{ meal.calories }} cal</span>
+            <span>{{ meal.protein }}g P</span>
+            <span>{{ meal.carbs }}g C</span>
+            <span>{{ meal.fat }}g F</span>
+        </div>
+    </div>
+</div>

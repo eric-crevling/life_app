@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+{% block title %}Weigh-ins — HomeBase{% endblock %}
+{% block content %}
+    <div class="max-w-lg mx-auto space-y-6">
+        <h1 class="text-2xl font-bold">Weigh-ins</h1>
+        <div class="card bg-base-100 shadow">
+            <div class="card-body">
+                <form hx-post="{% url 'tracking:weighin_create' %}"
+                      hx-target="#weighin-list"
+                      hx-swap="afterbegin"
+                      hx-on::after-request="if(event.detail.successful) this.reset()">
+                    {% csrf_token %}
+                    <div class="flex items-end gap-3">
+                        <label class="form-control flex-1">
+                            <span class="label-text">Weight (lbs)</span>
+                            {{ form.weight }}
+                        </label>
+                        <label class="form-control flex-1">
+                            <span class="label-text">Date</span>
+                            {{ form.date }}
+                        </label>
+                        <button type="submit" class="btn btn-primary">Log</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+        <div id="weighin-list" class="space-y-2">
+            {% for weighin in weighins %}
+                {% include "tracking/partials/weighin_row.html" %}
+            {% empty %}
+                <p class="text-center text-base-content/60">No weigh-ins yet.</p>
+            {% endfor %}
+        </div>
+    </div>
+{% endblock %}

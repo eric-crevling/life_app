@@ -1,0 +1,102 @@
+{% extends "base.html" %}
+{% block title %}Goals — HomeBase{% endblock %}
+{% block content %}
+    <div class="max-w-lg mx-auto space-y-6">
+        <h1 class="text-2xl font-bold">Goals</h1>
+        <!-- Macro Goals -->
+        <div class="card bg-base-100 shadow">
+            <div class="card-body">
+                <h2 class="card-title text-lg">Daily Macros</h2>
+                {% if macro_goal %}
+                    <div class="grid grid-cols-4 text-center gap-2">
+                        <div>
+                            <div class="text-xs text-base-content/60">Calories</div>
+                            <div class="font-bold">{{ macro_goal.calories }}</div>
+                        </div>
+                        <div>
+                            <div class="text-xs text-base-content/60">Protein</div>
+                            <div class="font-bold">{{ macro_goal.protein }}g</div>
+                        </div>
+                        <div>
+                            <div class="text-xs text-base-content/60">Carbs</div>
+                            <div class="font-bold">{{ macro_goal.carbs }}g</div>
+                        </div>
+                        <div>
+                            <div class="text-xs text-base-content/60">Fat</div>
+                            <div class="font-bold">{{ macro_goal.fat }}g</div>
+                        </div>
+                    </div>
+                    <p class="text-xs text-base-content/50 mt-1">Since {{ macro_goal.start_date }}</p>
+                {% else %}
+                    <p class="text-base-content/60">No macro goals set yet.</p>
+                {% endif %}
+                <form method="post"
+                      action="{% url 'goals:macro_goal_create' %}"
+                      class="mt-3 space-y-3">
+                    {% csrf_token %}
+                    {% include "goals/partials/macro_form_fields.html" %}
+                    <button type="submit" class="btn btn-primary btn-sm w-full">
+                        {% if macro_goal %}
+                            Update Macros
+                        {% else %}
+                            Set Macros
+                        {% endif %}
+                    </button>
+                </form>
+            </div>
+        </div>
+        <!-- Weight Goal -->
+        <div class="card bg-base-100 shadow">
+            <div class="card-body">
+                <h2 class="card-title text-lg">Weight Goal</h2>
+                {% if weight_goal %}
+                    <p class="font-bold text-lg">{{ weight_goal.target_weight }} lbs</p>
+                    {% if weight_goal.target_date %}
+                        <p class="text-sm text-base-content/60">By {{ weight_goal.target_date }}</p>
+                    {% endif %}
+                    <p class="text-xs text-base-content/50">Since {{ weight_goal.start_date }}</p>
+                {% else %}
+                    <p class="text-base-content/60">No weight goal set yet.</p>
+                {% endif %}
+                <form method="post"
+                      action="{% url 'goals:weight_goal_create' %}"
+                      class="mt-3 space-y-3">
+                    {% csrf_token %}
+                    {% include "goals/partials/weight_form_fields.html" %}
+                    <button type="submit" class="btn btn-primary btn-sm w-full">
+                        {% if weight_goal %}
+                            Update Goal
+                        {% else %}
+                            Set Goal
+                        {% endif %}
+                    </button>
+                </form>
+            </div>
+        </div>
+        <!-- Strength Goals -->
+        <div class="card bg-base-100 shadow">
+            <div class="card-body">
+                <h2 class="card-title text-lg">Strength Goals</h2>
+                {% if strength_goals %}
+                    <div class="space-y-2">
+                        {% for goal in strength_goals %}
+                            <div class="flex justify-between items-center">
+                                <span class="font-bold">{{ goal.exercise_name }}</span>
+                                <span>{{ goal.target_weight }} lbs</span>
+                            </div>
+                        {% endfor %}
+                    </div>
+                {% else %}
+                    <p class="text-base-content/60">No strength goals set yet.</p>
+                {% endif %}
+                <form method="post"
+                      action="{% url 'goals:strength_goal_create' %}"
+                      class="mt-3 space-y-3">
+                    {% csrf_token %}
+                    {% include "goals/partials/strength_form_fields.html" %}
+                    <button type="submit" class="btn btn-primary btn-sm w-full">Add Strength Goal</button>
+                </form>
+            </div>
+        </div>
+    </div>
+{% endblock %}

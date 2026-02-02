@@ -1,0 +1,59 @@
+{% extends "base.html" %}
+{% block title %}Workouts — HomeBase{% endblock %}
+{% block content %}
+    <div class="max-w-lg mx-auto space-y-6">
+        <h1 class="text-2xl font-bold">Workouts</h1>
+        <div class="card bg-base-100 shadow">
+            <div class="card-body">
+                <h2 class="card-title text-base">New Workout</h2>
+                <form method="post"
+                      action="{% url 'tracking:workout_create' %}"
+                      class="space-y-3">
+                    {% csrf_token %}
+                    <label class="form-control w-full">
+                        <span class="label-text">Category</span>
+                        {{ form.category }}
+                    </label>
+                    <label class="form-control w-full">
+                        <span class="label-text">Date</span>
+                        {{ form.date }}
+                    </label>
+                    <label class="form-control w-full">
+                        <span class="label-text">Notes</span>
+                        {{ form.notes }}
+                    </label>
+                    <button type="submit" class="btn btn-primary w-full">Start Workout</button>
+                </form>
+            </div>
+        </div>
+        <div class="card bg-base-100 shadow">
+            <div class="card-body">
+                <h2 class="card-title text-base">Add Category</h2>
+                <form method="post"
+                      action="{% url 'tracking:workout_create' %}"
+                      class="flex gap-3">
+                    {% csrf_token %}
+                    <input type="hidden" name="new_category" value="1">
+                    {{ category_form.name }}
+                    <button type="submit" class="btn btn-secondary btn-sm">Add</button>
+                </form>
+            </div>
+        </div>
+        <div class="space-y-2">
+            {% for workout in workouts %}
+                <a href="{% url 'tracking:workout_detail' workout.pk %}"
+                   class="card bg-base-100 shadow-sm block">
+                    <div class="card-body py-3 px-4 flex-row justify-between items-center">
+                        <div>
+                            <span class="font-bold">{{ workout.category|default:"No category" }}</span>
+                            <span class="text-sm text-base-content/60 ml-2">{{ workout.exercises.count }} exercises</span>
+                        </div>
+                        <span class="text-sm text-base-content/60">{{ workout.date }}</span>
+                    </div>
+                </a>
+            {% empty %}
+                <p class="text-center text-base-content/60">No workouts yet.</p>
+            {% endfor %}
+        </div>
+    </div>
+{% endblock %}

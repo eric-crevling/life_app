@@ -13,7 +13,8 @@
         <script src="https://unpkg.com/htmx.org@2.0.4"></script>
         <script defer src="https://unpkg.com/alpinejs@3/dist/cdn.min.js"></script>
     </head>
-    <body class="min-h-screen bg-base-200">
+    <body class="min-h-screen bg-base-200"
+          hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}'>
         <main class="container mx-auto p-4">
             {% block content %}{% endblock %}
         </main>

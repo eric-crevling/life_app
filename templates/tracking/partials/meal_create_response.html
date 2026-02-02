@@ -1,0 +1,12 @@
+{% include "tracking/partials/meal_row.html" %}
+<div id="meal-totals" hx-swap-oob="true">{% include "tracking/partials/meal_totals.html" %}</div>
+<div id="meal-warning" hx-swap-oob="true">
+    {% if overages %}
+        <div class="alert alert-warning shadow">
+            <div>
+                <p class="font-bold">You're over your daily goals:</p>
+                {% for overage in overages %}<p>{{ overage }} over</p>{% endfor %}
+            </div>
+        </div>
+    {% endif %}
+</div>

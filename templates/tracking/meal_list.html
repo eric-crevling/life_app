@@ -1,0 +1,55 @@
+{% extends "base.html" %}
+{% block title %}Meals — HomeBase{% endblock %}
+{% block content %}
+    <div class="max-w-lg mx-auto space-y-6">
+        <h1 class="text-2xl font-bold">Today's Meals</h1>
+        <div id="meal-warning"></div>
+        <div id="meal-totals">{% include "tracking/partials/meal_totals.html" %}</div>
+        <div class="card bg-base-100 shadow">
+            <div class="card-body">
+                <form hx-post="{% url 'tracking:meal_create' %}"
+                      hx-target="#meal-list"
+                      hx-swap="afterbegin"
+                      hx-on::after-request="if(event.detail.successful) this.reset()">
+                    {% csrf_token %}
+                    <div class="space-y-3">
+                        <label class="form-control w-full">
+                            <span class="label-text">Meal name</span>
+                            {{ form.name }}
+                        </label>
+                        <div class="grid grid-cols-2 gap-3">
+                            <label class="form-control">
+                                <span class="label-text">Calories</span>
+                                {{ form.calories }}
+                            </label>
+                            <label class="form-control">
+                                <span class="label-text">Protein (g)</span>
+                                {{ form.protein }}
+                            </label>
+                            <label class="form-control">
+                                <span class="label-text">Carbs (g)</span>
+                                {{ form.carbs }}
+                            </label>
+                            <label class="form-control">
+                                <span class="label-text">Fat (g)</span>
+                                {{ form.fat }}
+                            </label>
+                        </div>
+                        <label class="form-control w-full">
+                            <span class="label-text">Meal type (optional)</span>
+                            {{ form.meal_type }}
+                        </label>
+                        <button type="submit" class="btn btn-primary w-full">Log Meal</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+        <div id="meal-list" class="space-y-2">
+            {% for meal in meals %}
+                {% include "tracking/partials/meal_row.html" %}
+            {% empty %}
+                <p class="text-center text-base-content/60">No meals logged today.</p>
+            {% endfor %}
+        </div>
+    </div>
+{% endblock %}

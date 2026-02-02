@@ -1,0 +1,28 @@
+<div id="saved-{{ saved.pk }}" class="card bg-base-100 shadow-sm">
+    <div class="card-body py-3 px-4">
+        <div class="flex justify-between items-start">
+            <span class="font-bold">{{ saved.name }}</span>
+            <div class="flex gap-2">
+                {% if just_relogged %}
+                    <span class="badge badge-sm badge-success">Logged!</span>
+                {% else %}
+                    <button hx-post="{% url 'tracking:saved_meal_relog' saved.pk %}"
+                            hx-target="#saved-{{ saved.pk }}"
+                            hx-swap="outerHTML"
+                            class="btn btn-primary btn-xs">Relog</button>
+                {% endif %}
+                <button hx-post="{% url 'tracking:saved_meal_delete' saved.pk %}"
+                        hx-target="#saved-{{ saved.pk }}"
+                        hx-swap="outerHTML"
+                        hx-confirm="Delete this saved meal?"
+                        class="btn btn-ghost btn-xs text-error">Delete</button>
+            </div>
+        </div>
+        <div class="grid grid-cols-4 text-sm text-base-content/70 mt-1">
+            <span>{{ saved.calories }} cal</span>
+            <span>{{ saved.protein }}g P</span>
+            <span>{{ saved.carbs }}g C</span>
+            <span>{{ saved.fat }}g F</span>
+        </div>
+    </div>
+</div>
