@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+{% block title %}Sign Out — HomeBase{% endblock %}
+{% block content %}
+    <div class="max-w-sm mx-auto mt-10 space-y-6">
+        <div class="card bg-base-100 shadow">
+            <div class="card-body text-center space-y-4">
+                <h1 class="text-2xl font-bold">Sign Out</h1>
+                <p class="text-base-content/60">Are you sure you want to sign out?</p>
+                <form method="post" action="{% url 'account_logout' %}">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-primary w-full">Sign Out</button>
+                </form>
+                <a href="/" class="btn btn-ghost w-full">Cancel</a>
+            </div>
+        </div>
+    </div>
+{% endblock %}
