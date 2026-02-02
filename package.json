@@ -16,7 +16,7 @@
     "tailwindcss": "^4.1.18"
   },
   "scripts": {
-    "tailwind:dev": "npx @tailwindcss/cli -i static/css/input.css -o static/css/output.css --watch",
-    "tailwind:build": "npx @tailwindcss/cli -i static/css/input.css -o static/css/output.css --minify"
-  }
+    "tailwind:dev": "npx @tailwindcss/cli -i src/css/input.css -o static/css/output.css --watch",
+    "tailwind:build": "npx @tailwindcss/cli -i src/css/input.css -o static/css/output.css --minify"
+  },
 }
